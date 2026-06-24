@@ -1,0 +1,197 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Filter, Grid3X3, List, SlidersHorizontal } from 'lucide-react';
+import ListingCard from '../components/ListingCard';
+import SearchBar from '../components/SearchBar';
+import { listingsApi } from '../lib/api';
+import { vehicleCategories, governorates, vehicleBrands } from '../lib/data';
+import type { Listing } from '../types';
+
+export default function Vehicles() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const category = searchParams.get('category') || '';
+  const subcategory = searchParams.get('subcategory') || '';
+  const governorate = searchParams.get('governorate') || '';
+  const search = searchParams.get('search') || '';
+  const brand = searchParams.get('brand') || '';
+  const minPrice = searchParams.get('minPrice') || '';
+  const maxPrice = searchParams.get('maxPrice') || '';
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      try {
+        const params: Record<string, string> = {};
+        if (category) params.category = category;
+        if (subcategory) params.subcategory = subcategory;
+        if (governorate) params.governorate = governorate;
+        if (search) params.search = search;
+        if (brand) params.brand = brand;
+        if (minPrice) params.minPrice = minPrice;
+        if (maxPrice) params.maxPrice = maxPrice;
+        
+        const response = await listingsApi.getAll(params);
+        setListings(response.data.data);
+      } catch (error) {
+        console.error('Error fetching listings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, [category, subcategory, governorate, search, brand, minPrice, maxPrice]);
+
+  const updateFilter = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    setSearchParams(newParams);
+  };
+
+  return (
+    <div className="min-h-screen bg-bg pb-20 sm:pb-8">
+      {/* Header */}
+      <div className="bg-navy py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-4">سوق الشاحنات</h1>
+          <SearchBar variant="header" />
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Vehicle Categories */}
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-4 mb-4">
+          <button
+            onClick={() => updateFilter('subcategory', '')}
+            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+              !subcategory ? 'bg-orange text-white' : 'bg-white text-text hover:bg-orange/10'
+            }`}
+          >
+            الكل
+          </button>
+          {vehicleCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => updateFilter('subcategory', cat.id)}
+              className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                subcategory === cat.id ? 'bg-orange text-white' : 'bg-white text-text hover:bg-orange/10'
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Filters & View */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-1.5 bg-white px-4 py-2 rounded-xl text-sm font-bold text-text hover:shadow-sm transition-shadow"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>الفلاتر</span>
+            </button>
+            <span className="text-sm text-text-light">{listings.length} نتيجة</span>
+          </div>
+          <div className="flex items-center gap-2 bg-white rounded-xl p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-orange text-white' : 'text-text-light hover:text-text'}`}
+            >
+              <Grid3X3 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-orange text-white' : 'text-text-light hover:text-text'}`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Advanced Filters */}
+        {showFilters && (
+          <div className="bg-white rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1.5">المحافظة</label>
+              <select
+                value={governorate}
+                onChange={(e) => updateFilter('governorate', e.target.value)}
+                className="w-full h-10 px-3 bg-bg rounded-lg border border-border focus:border-orange focus:outline-none text-sm"
+              >
+                <option value="">جميع المحافظات</option>
+                {governorates.map((g) => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1.5">الماركة</label>
+              <select
+                value={brand}
+                onChange={(e) => updateFilter('brand', e.target.value)}
+                className="w-full h-10 px-3 bg-bg rounded-lg border border-border focus:border-orange focus:outline-none text-sm"
+              >
+                <option value="">جميع الماركات</option>
+                {vehicleBrands.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1.5">أقل سعر</label>
+              <input
+                type="number"
+                value={minPrice}
+                onChange={(e) => updateFilter('minPrice', e.target.value)}
+                placeholder="0"
+                className="w-full h-10 px-3 bg-bg rounded-lg border border-border focus:border-orange focus:outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-text-light mb-1.5">أعلى سعر</label>
+              <input
+                type="number"
+                value={maxPrice}
+                onChange={(e) => updateFilter('maxPrice', e.target.value)}
+                placeholder="10000000"
+                className="w-full h-10 px-3 bg-bg rounded-lg border border-border focus:border-orange focus:outline-none text-sm"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Listings Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl h-80 animate-pulse" />
+            ))}
+          </div>
+        ) : listings.length === 0 ? (
+          <div className="bg-white rounded-2xl p-12 text-center">
+            <Filter className="w-16 h-16 text-text-light mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-text mb-2">لا توجد إعلانات</h3>
+            <p className="text-text-light text-sm">جرّب تغيير الفلاتر أو البحث بكلمات مختلفة</p>
+          </div>
+        ) : (
+          <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4'}>
+            {listings.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
