@@ -196,7 +196,10 @@ export default function Login() {
             {/* Google */}
             <button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={() => {
+  console.log("GOOGLE BUTTON CLICKED");
+  handleGoogleLogin();
+}}
               className="w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-black font-bold rounded-xl flex items-center justify-center gap-2"
             >
               🔵 تسجيل الدخول بجوجل
