@@ -1,89 +1,99 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { signInWithGoogle } from "../auth/googleAuth";
 import { signInWithFacebook } from "../auth/facebookAuth";
-import { auth } from "../lib/auth";
-import { createUserIfNotExists, getUserFromDB } from "../lib/userService";
-import type { User as AppUser } from "../types"; 
+
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingFacebook, setLoadingFacebook] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSocialLogin = async (provider: "google" | "facebook") => {
+  const handleGoogle = async () => {
     try {
-      if (provider === "google") setLoadingGoogle(true);
-      else setLoadingFacebook(true);
-      
+      setLoadingGoogle(true);
       setError("");
 
-      // 1. تسجيل الدخول عبر المزود
-      const firebaseUser = provider === "google" ? await signInWithGoogle() : await signInWithFacebook();
+      const user = await signInWithGoogle();
 
-      if (!firebaseUser || !firebaseUser.email) {
-        throw new Error("لم نتمكن من الحصول على بيانات الحساب");
-      }
+      login(user);
 
-      // 2. التحقق من وجوده في Firestore أو إنشاؤه ببيانات افتراضية آمنة للـ Types
-      let dbUser = await getUserFromDB(firebaseUser.id);
-      
-      if (!dbUser) {
-        dbUser = await createUserIfNotExists({
-          id: firebaseUser.id,
-          name: firebaseUser.name || "مستخدم",
-          email: firebaseUser.email,
-          phone: firebaseUser.phone || "",
-          type: "individual",
-          governorate: "",
-          verified: false,
-          createdAt: new Date().toISOString()
-        });
-      }
+      navigate("/", { replace: true });
 
-      // 3. تعيين المستخدم الآمن المطابق للـ Interface في الـ State والملاحة
-      auth.setUser(dbUser);
-      navigate("/");
-
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError(`فشل تسجيل الدخول بـ ${provider === "google" ? "جوجل" : "فيسبوك"}`);
+      setError("فشل تسجيل الدخول بواسطة جوجل");
     } finally {
       setLoadingGoogle(false);
+    }
+  };
+
+  const handleFacebook = async () => {
+    try {
+      setLoadingFacebook(true);
+      setError("");
+
+      const user = await signInWithFacebook();
+
+      login(user);
+
+      navigate("/", { replace: true });
+
+    } catch (err) {
+      console.error(err);
+      setError("فشل تسجيل الدخول بواسطة فيسبوك");
+    } finally {
       setLoadingFacebook(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4" dir="rtl">
-      <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow">
-        <h1 className="text-2xl font-bold text-center mb-6">تسجيل الدخول</h1>
+    <div
+      dir="rtl"
+      className="min-h-screen flex items-center justify-center bg-gray-100 px-4"
+    >
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+
+        <h1 className="text-3xl font-bold text-center mb-2">
+          تسجيل الدخول
+        </h1>
+
+        <p className="text-center text-gray-500 mb-8">
+          مرحباً بك فى تطبيق طريق
+        </p>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm text-center">
+          <div className="bg-red-100 text-red-700 p-3 rounded-xl mb-5 text-center">
             {error}
           </div>
         )}
 
-        {/* GOOGLE */}
         <button
-          onClick={() => handleSocialLogin("google")}
+          onClick={handleGoogle}
           disabled={loadingGoogle || loadingFacebook}
-          className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white py-3 rounded-xl mb-3 transition-colors asset-btn"
+          className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl transition mb-4 disabled:opacity-50"
         >
-          {loadingGoogle ? "جاري الدخول..." : "تسجيل الدخول بجوجل"}
+          {loadingGoogle
+            ? "جارى تسجيل الدخول..."
+            : "تسجيل الدخول بواسطة جوجل"}
         </button>
 
-        {/* FACEBOOK */}
         <button
-          onClick={() => handleSocialLogin("facebook")}
+          onClick={handleFacebook}
           disabled={loadingGoogle || loadingFacebook}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white py-3 rounded-xl transition-colors asset-btn"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition disabled:opacity-50"
         >
-          {loadingFacebook ? "جاري الدخول..." : "تسجيل الدخول بفيسبوك"}
+          {loadingFacebook
+            ? "جارى تسجيل الدخول..."
+            : "تسجيل الدخول بواسطة فيسبوك"}
         </button>
+
       </div>
     </div>
   );

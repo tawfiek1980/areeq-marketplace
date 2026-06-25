@@ -1,22 +1,26 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAuth } from "../firebase";
-
-import { auth } from "../lib/auth";
-import { createUserIfNotExists } from "../services/userService";
-
-import type { User } from "../types";
+import { createUserIfNotExists } from "../lib/userService";
 
 const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
+    console.log("🔵 Starting Google Login...");
+
     const result = await signInWithPopup(firebaseAuth, provider);
+
+    console.log("🟢 Google Login Success");
 
     const firebaseUser = result.user;
 
-    const user: User = {
+    if (!firebaseUser) {
+      throw new Error("No Firebase user returned");
+    }
+
+    const user = {
       id: firebaseUser.uid,
-      name: firebaseUser.displayName || "مستخدم جديد",
+      name: firebaseUser.displayName || "User",
       email: firebaseUser.email || "",
       phone: firebaseUser.phoneNumber || "",
       avatar: firebaseUser.photoURL || "",
@@ -28,11 +32,15 @@ export const signInWithGoogle = async () => {
 
     const dbUser = await createUserIfNotExists(user);
 
-    auth.setUser(dbUser);
+    console.log("🟢 User stored in Firestore");
 
     return dbUser;
-  } catch (error) {
-    console.error("Google Login Error:", error);
+
+  } catch (error: any) {
+    console.error("🔴 FULL GOOGLE ERROR:", error);
+    console.error("🔴 ERROR CODE:", error?.code);
+    console.error("🔴 ERROR MESSAGE:", error?.message);
+
     throw error;
   }
 };
