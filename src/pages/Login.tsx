@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ArrowLeft } from 'lucide-react';
 
 import { authApi } from '../lib/api';
-import { auth } from '../lib/auth';
+import { auth, demoAdmin } from '../lib/auth';
 
 // 🔵 Social Auth
 import { signInWithGoogle } from '../auth/googleAuth';
@@ -30,12 +30,18 @@ export default function Login() {
     setError('');
 
     try {
-      const response = await authApi.login(formData);
-      const { user, token } = response.data.data;
+     // حساب الأدمن المؤقت
+if (
+  formData.email === 'tawfiek1980@gmail.com' &&
+  formData.password === '123456'
+) {
+  auth.setAuth('admin-token', demoAdmin);
+  navigate('/admin');
+  return;
+}
 
-      auth.setAuth(token, user);
-
-      navigate(user.type === 'admin' ? '/admin' : '/');
+// مؤقتاً لو أي شخص حاول يدخل
+setError('بيانات الدخول غير صحيحة');
     } catch (err: any) {
       setError(err.response?.data?.message || 'بيانات الدخول غير صالحة');
     } finally {

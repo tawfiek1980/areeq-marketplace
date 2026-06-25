@@ -24,24 +24,14 @@ export const auth = {
   },
 };
 
+
 export const demoAdmin = {
   id: 'admin-1',
-  name: 'مدير المنصة',
-  email: 'admin@tareeq.com',
-  phone: '01000000000',
+  name: 'توفيق',
+  email: 'tawfiek1980@gmail.com',
+  phone: '01018870145',
   type: 'admin',
-  governorate: 'القاهرة',
-  verified: true,
-  createdAt: new Date().toISOString(),
-} as User;
-
-export const demoUser = {
-  id: 'user-1',
-  name: 'أحمد محمد',
-  email: 'ahmed@example.com',
-  phone: '01001234567',
-  type: 'company',
-  governorate: 'القاهرة',
+  governorate: 'بني سويف',
   verified: true,
   createdAt: new Date().toISOString(),
 } as User;
