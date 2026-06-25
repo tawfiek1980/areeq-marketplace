@@ -1,14 +1,20 @@
 import type { User } from "../types";
 
+const ADMIN_EMAILS = [
+  "tawfiek.fayez@gmail.com"
+];
+
 export const adaptFirebaseUser = (firebaseUser: any): User => {
+  const email = firebaseUser.email || "";
+
   return {
     id: firebaseUser.uid,
     name: firebaseUser.displayName || "مستخدم جديد",
-    email: firebaseUser.email || "",
+    email,
     phone: firebaseUser.phoneNumber || "",
 
-    // 🔒 تعيين نوع الحساب مؤقتاً كـ individual لجميع المسجلين عبر السوشيال ميديا
-    type: "individual",
+    // 🚨 أهم تعديل هنا
+    type: ADMIN_EMAILS.includes(email) ? "admin" : "individual",
 
     governorate: "",
     verified: true,
