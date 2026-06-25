@@ -1,10 +1,6 @@
 import type { User } from "../types";
 
 export const adaptFirebaseUser = (firebaseUser: any): User => {
-  const adminEmails = [
-    "tawfiek.fayez@gmail.com",
-    "tawfiek1980@gmail.com"
-  ];
 
   return {
     id: firebaseUser.uid,
@@ -12,9 +8,8 @@ export const adaptFirebaseUser = (firebaseUser: any): User => {
     email: firebaseUser.email || "",
     phone: firebaseUser.phoneNumber || "",
 
-    type: adminEmails.includes(firebaseUser.email)
-      ? "admin"
-      : "individual",
+    // اختبار مؤقت
+    type: "admin",
 
     governorate: "",
     verified: true,
