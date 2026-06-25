@@ -6,7 +6,8 @@ import { authApi } from '../lib/api';
 import { auth, demoAdmin } from '../lib/auth';
 
 // 🔵 Social Auth
-import { signInWithGoogle } from '../auth/googleAuth';
+// 💡 ملاحظة: تأكد من استيراد adaptFirebaseUser من المسار الصحيح لديك إذا لم تكن قادمة من هنا
+import { signInWithGoogle, adaptFirebaseUser } from '../auth/googleAuth';
 import { signInWithFacebook } from '../auth/facebookAuth';
 
 export default function Login() {
@@ -55,8 +56,19 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      await signInWithGoogle();
-      window.location.href = '/';
+      // تخزين نتيجة الدخول في متغير result
+      const result = await signInWithGoogle();
+      
+      if (result && result.user) {
+        const user = adaptFirebaseUser(result.user);
+        auth.setAuth(result.user.uid, user);
+
+        if (!user.phone || !user.governorate) {
+          navigate('/complete-profile');
+        } else {
+          navigate('/');
+        }
+      }
     } catch (error: any) {
       console.error("GOOGLE FULL ERROR", error);
       alert(error.code + "\n\n" + error.message);
@@ -71,8 +83,19 @@ export default function Login() {
   const handleFacebookLogin = async () => {
     try {
       setLoading(true);
-      await signInWithFacebook();
-      window.location.href = '/';
+      // تطبيق نفس المنطق على فيسبوك أيضاً لتوحيد التجربة
+      const result = await signInWithFacebook();
+      
+      if (result && result.user) {
+        const user = adaptFirebaseUser(result.user);
+        auth.setAuth(result.user.uid, user);
+
+        if (!user.phone || !user.governorate) {
+          navigate('/complete-profile');
+        } else {
+          navigate('/');
+        }
+      }
     } catch (error) {
       console.error('Facebook login error:', error);
       alert('فشل تسجيل الدخول بفيسبوك');

@@ -1,28 +1,25 @@
 import { FacebookAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAuth } from "../firebase";
+import { auth } from "../lib/auth";
+import { adaptFirebaseUser } from "../lib/userAdapter";
 
 const provider = new FacebookAuthProvider();
 
 export const signInWithFacebook = async () => {
-try {
-const result = await signInWithPopup(firebaseAuth, provider);
+  try {
+    const result = await signInWithPopup(firebaseAuth, provider);
 
-```
-console.log("FACEBOOK SUCCESS", result);
+    const user = adaptFirebaseUser(result.user);
 
-return result.user;
-```
+    auth.setAuth(result.user.uid, user);
 
-} catch (error) {
-console.error("FACEBOOK FULL ERROR", error);
+    return user;
 
-```
-alert(
-  error.code + "\n\n" + error.message
-);
+  } catch (error: any) {
+    console.error("FACEBOOK FULL ERROR", error);
 
-throw error;
-```
+    alert(error.code + "\n\n" + error.message);
 
-}
+    throw error;
+  }
 };
