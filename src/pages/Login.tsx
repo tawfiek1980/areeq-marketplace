@@ -30,18 +30,18 @@ export default function Login() {
     setError('');
 
     try {
-     // حساب الأدمن المؤقت
-if (
-  formData.email === 'tawfiek1980@gmail.com' &&
-  formData.password === '123456'
-) {
-  auth.setAuth('admin-token', demoAdmin);
-  navigate('/admin');
-  return;
-}
+      // حساب الأدمن المؤقت
+      if (
+        formData.email === 'tawfiek1980@gmail.com' &&
+        formData.password === '123456'
+      ) {
+        auth.setAuth('admin-token', demoAdmin);
+        navigate('/admin');
+        return;
+      }
 
-// مؤقتاً لو أي شخص حاول يدخل
-setError('بيانات الدخول غير صحيحة');
+      // مؤقتاً لو أي شخص حاول يدخل
+      setError('بيانات الدخول غير صحيحة');
     } catch (err: any) {
       setError(err.response?.data?.message || 'بيانات الدخول غير صالحة');
     } finally {
@@ -55,18 +55,15 @@ setError('بيانات الدخول غير صحيحة');
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-
       await signInWithGoogle();
-
-      window.location.href = '/'; // 🔥 حل مشكلة القفل والاستقرار
-
-   catch (error: any) {
-  console.error("GOOGLE FULL ERROR", error);
-
-  alert(
-    error.code + "\n\n" + error.message
-  );
-}
+      window.location.href = '/';
+    } catch (error: any) {
+      console.error("GOOGLE FULL ERROR", error);
+      alert(error.code + "\n\n" + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // =========================
   // 📘 FACEBOOK LOGIN
@@ -74,11 +71,8 @@ setError('بيانات الدخول غير صحيحة');
   const handleFacebookLogin = async () => {
     try {
       setLoading(true);
-
       await signInWithFacebook();
-
       window.location.href = '/';
-
     } catch (error) {
       console.error('Facebook login error:', error);
       alert('فشل تسجيل الدخول بفيسبوك');
@@ -203,9 +197,9 @@ setError('بيانات الدخول غير صحيحة');
             <button
               type="button"
               onClick={() => {
-  console.log("GOOGLE BUTTON CLICKED");
-  handleGoogleLogin();
-}}
+                console.log("GOOGLE BUTTON CLICKED");
+                handleGoogleLogin();
+              }}
               className="w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-black font-bold rounded-xl flex items-center justify-center gap-2"
             >
               🔵 تسجيل الدخول بجوجل
