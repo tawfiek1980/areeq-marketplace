@@ -3,25 +3,67 @@ import type { User } from "../types";
 const USER_KEY = "tareeq_user";
 
 export const auth = {
-  setUser: (user: User) => {
+  /**
+   * حفظ المستخدم
+   */
+  setUser(user: User): void {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   },
 
-  getUser: (): User | null => {
+  /**
+   * جلب المستخدم
+   */
+  getUser(): User | null {
     const data = localStorage.getItem(USER_KEY);
-    return data ? JSON.parse(data) : null;
+
+    if (!data) return null;
+
+    try {
+      return JSON.parse(data) as User;
+    } catch (error) {
+      console.error("Failed to parse user:", error);
+      return null;
+    }
   },
 
-  logout: () => {
+  /**
+   * هل المستخدم مسجل دخول؟
+   */
+  isAuthenticated(): boolean {
+    return this.getUser() !== null;
+  },
+
+  /**
+   * هل المستخدم مدير؟
+   */
+  isAdmin(): boolean {
+    const user = this.getUser();
+
+    if (!user) return false;
+
+    return user.type === "admin";
+  },
+
+  /**
+   * نوع المستخدم
+   */
+  getRole(): User["type"] | null {
+    const user = this.getUser();
+
+    return user ? user.type : null;
+  },
+
+  /**
+   * حذف الجلسة
+   */
+  logout(): void {
     localStorage.removeItem(USER_KEY);
   },
 
-  isAuthenticated: (): boolean => {
-    return !!localStorage.getItem(USER_KEY);
-  },
-
-  isAdmin: (): boolean => {
-    const user = auth.getUser();
-    return user?.type === "admin";
+  /**
+   * مسح البيانات بالكامل
+   */
+  clear(): void {
+    localStorage.clear();
   },
 };

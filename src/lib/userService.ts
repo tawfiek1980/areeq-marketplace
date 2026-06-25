@@ -1,21 +1,35 @@
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import type { AppUser } from "../types";
+import type { User } from "../types";
 
-export const createUserIfNotExists = async (user: AppUser) => {
-  const ref = doc(db, "users", user.uid);
+// دالة لإنشاء مستخدم جديد في Firestore إذا لم يكن موجوداً (للتسجيل الاجتماعي)
+export const createUserIfNotExists = async (user: Partial<User> & { id: string; email: string }) => {
+  const ref = doc(db, "users", user.id);
   const snap = await getDoc(ref);
 
   if (!snap.exists()) {
-    await setDoc(ref, user);
+    const defaultUser: User = {
+      id: user.id,
+      name: user.name || "مستخدم جديد",
+      email: user.email,
+      phone: user.phone || "",
+      type: user.type || "individual",
+      governorate: user.governorate || "القاهرة", // قيمة افتراضية حتى يحددها من ملفه الشخصي
+      verified: user.verified || false,
+      createdAt: user.createdAt || new Date().toISOString(),
+      avatar: user.avatar || "",
+    };
+    await setDoc(ref, defaultUser);
+    return defaultUser;
   }
 
-  return user;
+  return snap.data() as User;
 };
 
-export const getUserById = async (uid: string) => {
-  const ref = doc(db, "users", uid);
+// جلب بيانات المستخدم كاملة من قاعدة البيانات
+export const getUserFromDB = async (id: string): Promise<User | null> => {
+  const ref = doc(db, "users", id);
   const snap = await getDoc(ref);
 
-  return snap.exists() ? (snap.data() as AppUser) : null;
+  return snap.exists() ? (snap.data() as User) : null;
 };

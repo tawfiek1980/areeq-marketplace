@@ -3,7 +3,13 @@ export interface User {
   name: string;
   email: string;
   phone: string;
-  type: 'individual' | 'company' | 'dealer' | 'workshop' | 'finance' | 'admin';
+  type:
+    | "individual"
+    | "company"
+    | "dealer"
+    | "workshop"
+    | "finance"
+    | "admin";
   avatar?: string;
   governorate: string;
   verified: boolean;
@@ -25,12 +31,12 @@ export interface Listing {
   userPhone: string;
   userType: string;
   verified: boolean;
-  status: 'active' | 'pending' | 'rejected' | 'sold';
+  status: "active" | "pending" | "rejected" | "sold";
   featured: boolean;
   year?: number;
   brand?: string;
   model?: string;
-  condition?: 'new' | 'used';
+  condition?: "new" | "used";
   createdAt: string;
 }
 
@@ -46,7 +52,7 @@ export interface Load {
   userId: string;
   userName: string;
   userPhone: string;
-  status: 'available' | 'in_transit' | 'delivered';
+  status: "available" | "in_transit" | "delivered";
   createdAt: string;
 }
 
@@ -54,7 +60,13 @@ export interface Job {
   id: string;
   title: string;
   company: string;
-  type: 'driver' | 'mechanic' | 'technician' | 'logistics' | 'warehouse' | 'sales';
+  type:
+    | "driver"
+    | "mechanic"
+    | "technician"
+    | "logistics"
+    | "warehouse"
+    | "sales";
   location: string;
   governorate: string;
   salary?: string;
@@ -64,7 +76,7 @@ export interface Job {
   userId: string;
   userName?: string;
   userPhone?: string;
-  status: 'active' | 'filled' | 'closed';
+  status: "active" | "filled" | "closed";
   featured: boolean;
   createdAt: string;
 }
@@ -78,7 +90,7 @@ export interface FinanceRequest {
   vehiclePrice: number;
   downPayment: number;
   monthlyIncome?: number;
-  status: 'new' | 'reviewing' | 'approved' | 'rejected';
+  status: "new" | "reviewing" | "approved" | "rejected";
   createdAt: string;
 }
 
@@ -103,7 +115,7 @@ export interface MarketStat {
   label: string;
   value: string;
   change?: string;
-  trend?: 'up' | 'down' | 'stable';
+  trend?: "up" | "down" | "stable";
 }
 
 export interface EmergencyService {
@@ -111,7 +123,7 @@ export interface EmergencyService {
   name: string;
   icon: string;
   description: string;
-  responseTime: string;
+ responseTime: string;
   phone: string;
 }
 

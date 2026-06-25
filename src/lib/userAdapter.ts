@@ -1,21 +1,12 @@
 import type { User } from "../types";
 
-const ADMIN_EMAILS = [
-  "tawfiek.fayez@gmail.com"
-];
-
 export const adaptFirebaseUser = (firebaseUser: any): User => {
-  const email = firebaseUser.email || "";
-
   return {
     id: firebaseUser.uid,
     name: firebaseUser.displayName || "مستخدم جديد",
-    email,
+    email: firebaseUser.email || "",
     phone: firebaseUser.phoneNumber || "",
-
-    // 🚨 أهم تعديل هنا
-    type: ADMIN_EMAILS.includes(email) ? "admin" : "individual",
-
+    type: "individual", // 👈 أي حد يدخل يبدأ فرد
     governorate: "",
     verified: true,
     createdAt: new Date().toISOString(),

@@ -37,8 +37,13 @@ export default function Register() {
         ...formData,
         type: formData.type as UserType['type'],
       });
-      const { user, token } = response.data.data;
-      auth.setAuth(token, user);
+      
+      // تفكيك الـ user والـ token بشكل آمن من الـ response الخاص بـ Axios
+      const { user } = response.data.data;
+      
+      // تعيين البيانات بأمان تام للنوع المعتمد
+      auth.setUser(user as UserType); 
+      
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.message || 'حدث خطأ أثناء إنشاء الحساب');
@@ -48,20 +53,19 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4 py-8">
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 py-8" dir="rtl">
       <div className="w-full max-w-lg">
         <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
             <img src="/tareeq-logo.png" alt="طريق" className="h-16 w-16 object-contain" />
           </Link>
           <h1 className="text-2xl font-extrabold text-navy mb-2">إنشاء حساب جديد</h1>
-          
           <p className="text-text-light text-sm">انضم إلى أكبر سوق لنقل الثقيل في مصر</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3 mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3 mb-4 text-center">
               {error}
             </div>
           )}
@@ -92,7 +96,7 @@ export default function Register() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full h-12 pr-12 pl-4 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none"
+                    className="w-full h-12 pr-12 pl-4 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none text-left"
                     placeholder="example@email.com"
                   />
                 </div>
@@ -106,7 +110,7 @@ export default function Register() {
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full h-12 pr-12 pl-4 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none"
+                    className="w-full h-12 pr-12 pl-4 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none text-left"
                     placeholder="01xxxxxxxxx"
                   />
                 </div>
@@ -159,7 +163,7 @@ export default function Register() {
                   minLength={6}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full h-12 pr-12 pl-12 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none"
+                  className="w-full h-12 pr-12 pl-12 bg-bg rounded-xl border border-border focus:border-orange focus:outline-none text-left"
                   placeholder="••••••••"
                 />
                 <button
@@ -184,7 +188,7 @@ export default function Register() {
 
           <div className="mt-6 text-center">
             <p className="text-text-light text-sm">
-              لديك حساب بالفعلؓ{' '}
+              لديك حساب بالفعل؟{' '}
               <Link to="/login" className="text-orange font-bold hover:underline">
                 تسجيل الدخول
               </Link>
