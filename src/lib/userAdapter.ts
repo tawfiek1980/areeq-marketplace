@@ -11,7 +11,7 @@ export const adaptFirebaseUser = (firebaseUser: any): User => {
     phone: firebaseUser.phoneNumber || '',
     
     // ✅ تم التعديل هنا
-    type: 'individual',
+    type: 'admin',
 
     governorate: '',
     verified: true,
