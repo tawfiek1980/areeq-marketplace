@@ -60,13 +60,13 @@ setError('بيانات الدخول غير صحيحة');
 
       window.location.href = '/'; // 🔥 حل مشكلة القفل والاستقرار
 
-    } catch (error) {
-      console.error('Google login error:', error);
-      alert('فشل تسجيل الدخول بجوجل');
-    } finally {
-      setLoading(false);
-    }
-  };
+   catch (error: any) {
+  console.error("GOOGLE FULL ERROR", error);
+
+  alert(
+    error.code + "\n\n" + error.message
+  );
+}
 
   // =========================
   // 📘 FACEBOOK LOGIN
