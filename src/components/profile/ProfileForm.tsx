@@ -16,6 +16,7 @@ const accountTypes: { value: User["type"]; label: string }[] = [
   { value: "company", label: "شركة نقل" },
   { value: "workshop", label: "ورشة" },
   { value: "finance", label: "شركة تمويل" },
+  { value: "admin", label: "أدمن" },
 ];
 
 const governorates = [
@@ -38,29 +39,32 @@ export default function ProfileForm({
   setSaving,
 }: Props) {
   const navigate = useNavigate();
-
   const { user, login } = useAuth();
+
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [governorate, setGovernorate] = useState(
+    user?.governorate || ""
+  );
+
+  const [type, setType] = useState<User["type"]>(
+    user?.type || "individual"
+  );
 
   if (!user) return null;
 
-  const [name, setName] = useState(user.name);
-  const [phone, setPhone] = useState(user.phone);
-  const [governorate, setGovernorate] = useState(user.governorate);
-
-  const [type, setType] = useState<User["type"]>(user.type);
-
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name || !phone || !governorate) {
-      alert("يرجى استكمال جميع البيانات");
+      alert("من فضلك أكمل جميع البيانات");
       return;
     }
 
     try {
       setSaving(true);
 
-      await completeProfile(user!.id, {
+      await completeProfile(user.id, {
         name,
         phone,
         governorate,
@@ -68,7 +72,6 @@ export default function ProfileForm({
       });
 
       const updatedUser: User = {
-  ...user!,
         ...user,
         name,
         phone,
@@ -78,22 +81,24 @@ export default function ProfileForm({
 
       login(updatedUser);
 
-      alert("تم حفظ البيانات");
+      alert("تم حفظ البيانات بنجاح");
 
       navigate("/");
     } catch (error) {
       console.error(error);
-      alert("حدث خطأ");
+      alert("حدث خطأ أثناء الحفظ");
     } finally {
       setSaving(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>
-        <label className="block mb-2">الاسم</label>
+        <label className="block mb-2 font-semibold">
+          الاسم
+        </label>
 
         <input
           className="w-full border rounded-xl p-3"
@@ -103,7 +108,9 @@ export default function ProfileForm({
       </div>
 
       <div>
-        <label className="block mb-2">رقم الهاتف</label>
+        <label className="block mb-2 font-semibold">
+          رقم الهاتف
+        </label>
 
         <input
           className="w-full border rounded-xl p-3"
@@ -113,12 +120,16 @@ export default function ProfileForm({
       </div>
 
       <div>
-        <label className="block mb-2">المحافظة</label>
+        <label className="block mb-2 font-semibold">
+          المحافظة
+        </label>
 
         <select
           className="w-full border rounded-xl p-3"
           value={governorate}
-          onChange={(e) => setGovernorate(e.target.value)}
+          onChange={(e) =>
+            setGovernorate(e.target.value)
+          }
         >
           <option value="">اختر المحافظة</option>
 
@@ -131,7 +142,9 @@ export default function ProfileForm({
       </div>
 
       <div>
-        <label className="block mb-2">نوع الحساب</label>
+        <label className="block mb-2 font-semibold">
+          نوع الحساب
+        </label>
 
         <select
           className="w-full border rounded-xl p-3"
@@ -141,10 +154,7 @@ export default function ProfileForm({
           }
         >
           {accountTypes.map((item) => (
-            <option
-              key={item.value}
-              value={item.value}
-            >
+            <option key={item.value} value={item.value}>
               {item.label}
             </option>
           ))}
@@ -152,8 +162,9 @@ export default function ProfileForm({
       </div>
 
       <button
+        type="submit"
         disabled={saving}
-        className="w-full bg-blue-600 text-white rounded-xl py-3"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3"
       >
         {saving ? "جارى الحفظ..." : "حفظ البيانات"}
       </button>

@@ -24,6 +24,8 @@ import Favorites from "./pages/Favorites";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+import CompleteProfile from "./pages/CompleteProfile";
+
 import { useAuth } from "./contexts/AuthContext";
 
 function App() {
@@ -60,14 +62,31 @@ function App() {
             <Route
               path="/login"
               element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Login />
+                isAuthenticated ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Login />
+                )
               }
             />
 
             <Route
               path="/register"
               element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Register />
+                isAuthenticated ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Register />
+                )
+              }
+            />
+
+            <Route
+              path="/complete-profile"
+              element={
+                <ProtectedRoute>
+                  <CompleteProfile />
+                </ProtectedRoute>
               }
             />
 

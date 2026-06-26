@@ -10,21 +10,36 @@ export default function ProtectedRoute({
   children,
   adminOnly = false,
 }: ProtectedRouteProps) {
-  // التحقق من تسجيل الدخول
+  // لو مش مسجل دخول
   if (!auth.isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
 
   const user = auth.getUser();
 
+  // احتياط لو مفيش user
   if (!user) {
     auth.logout();
     return <Navigate to="/login" replace />;
   }
 
-  // التحقق من صلاحيات المدير
+  // لو Admin route
   if (adminOnly && user.type !== "admin") {
     return <Navigate to="/" replace />;
+  }
+
+  // 🔥 إجبار استكمال البروفايل
+  const isProfileComplete =
+    !!user.name &&
+    !!user.phone &&
+    !!user.governorate &&
+    user.name.trim() !== "" &&
+    user.phone.trim() !== "" &&
+    user.governorate.trim() !== "";
+
+  // لو البيانات ناقصة → يروح Complete Profile
+  if (!isProfileComplete && window.location.pathname !== "/complete-profile") {
+    return <Navigate to="/complete-profile" replace />;
   }
 
   return <>{children}</>;
