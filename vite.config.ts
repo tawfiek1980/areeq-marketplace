@@ -17,6 +17,11 @@ export default defineConfig(async ({ mode }) => {
     processEnvDefines[`process.env.${key}`] = JSON.stringify(value);
   }
 
+export default defineConfig({
+  base: "/",
+  plugins: [react()]
+});
+
   return {
     plugins,
     envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
