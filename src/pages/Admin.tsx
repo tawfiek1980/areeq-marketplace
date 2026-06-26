@@ -15,7 +15,7 @@ export default function Admin() {
   useEffect(() => {
     const user = auth.getUser();
 
-    if (!user || user.role !== "admin") {
+    if (!user || user.type !== "admin") {
       navigate("/");
       return;
     }
