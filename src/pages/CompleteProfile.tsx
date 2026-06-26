@@ -1,3 +1,4 @@
+// CompleteProfile.tsx
 import { useState } from "react";
 import ProfileForm from "../components/profile/ProfileForm";
 
@@ -5,20 +6,19 @@ export default function CompleteProfile() {
   const [saving, setSaving] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4" dir="rtl">
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="min-h-screen bg-gray-50 py-10 px-4" dir="rtl">
+      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-        <div className="bg-blue-600 text-white p-6">
-          <h1 className="text-3xl font-bold">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white p-8">
+          <h1 className="text-3xl font-extrabold mb-2">
             استكمال بيانات الحساب
           </h1>
-
-          <p className="mt-2 opacity-90">
-            أكمل بياناتك مرة واحدة للاستفادة من جميع خدمات طريق.
+          <p className="text-blue-100 text-lg">
+            أكمل بياناتك مرة واحدة لتخصيص تجربتك والاستفادة من جميع خدمات طريق.
           </p>
         </div>
 
-        <div className="p-6">
+        <div className="p-8">
           <ProfileForm
             saving={saving}
             setSaving={setSaving}

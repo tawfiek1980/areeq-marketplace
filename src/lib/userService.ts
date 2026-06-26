@@ -1,3 +1,4 @@
+// userService.ts
 import { db } from "../firebase";
 import {
   doc,
@@ -9,7 +10,6 @@ import {
 
 import type { User } from "../types";
 
-// إنشاء مستخدم إذا لم يكن موجوداً
 export const createUserIfNotExists = async (
   user: Partial<User> & { id: string; email: string }
 ): Promise<User> => {
@@ -22,11 +22,18 @@ export const createUserIfNotExists = async (
       name: user.name || "مستخدم جديد",
       email: user.email,
       phone: user.phone || "",
+      whatsapp: user.whatsapp || user.phone || "",
       type: user.type || "individual",
       governorate: user.governorate || "القاهرة",
+      city: user.city || "",
+      currentLocation: user.currentLocation || "",
+      avatar: user.avatar || "",
+      drivingType: user.drivingType || "",
+      experienceYears: user.experienceYears || 0,
+      businessName: user.businessName || "",
+      specialization: user.specialization || "",
       verified: user.verified || false,
       createdAt: user.createdAt || new Date().toISOString(),
-      avatar: user.avatar || "",
     };
 
     await setDoc(ref, {
@@ -40,12 +47,10 @@ export const createUserIfNotExists = async (
   return snap.data() as User;
 };
 
-// جلب مستخدم
 export const getUserFromDB = async (
   id: string
 ): Promise<User | null> => {
   const ref = doc(db, "users", id);
-
   const snap = await getDoc(ref);
 
   if (!snap.exists()) {
@@ -55,7 +60,6 @@ export const getUserFromDB = async (
   return snap.data() as User;
 };
 
-// تحديث بيانات المستخدم
 export const updateUser = async (
   id: string,
   data: Partial<User>
@@ -68,31 +72,17 @@ export const updateUser = async (
   });
 };
 
-// هل المستخدم موجود؟
 export const userExists = async (
   id: string
 ): Promise<boolean> => {
   const ref = doc(db, "users", id);
-
   const snap = await getDoc(ref);
-
   return snap.exists();
 };
 
-// إكمال الملف الشخصي
 export const completeProfile = async (
   id: string,
-  profile: {
-    name: string;
-    phone: string;
-    governorate: string;
-    type: User["type"];
-  }
+  profile: Partial<User>
 ): Promise<void> => {
-  await updateUser(id, {
-    name: profile.name,
-    phone: profile.phone,
-    governorate: profile.governorate,
-    type: profile.type,
-  });
+  await updateUser(id, profile);
 };

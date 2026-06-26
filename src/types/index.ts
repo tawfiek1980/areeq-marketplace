@@ -1,8 +1,10 @@
+// index.ts
 export interface User {
   id: string;
   name: string;
   email: string;
   phone: string;
+  whatsapp?: string;
   type:
     | "individual"
     | "company"
@@ -12,8 +14,15 @@ export interface User {
     | "admin";
   avatar?: string;
   governorate: string;
+  city?: string;
+  currentLocation?: string;
+  drivingType?: string;
+  experienceYears?: number;
+  businessName?: string;
+  specialization?: string;
   verified: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Listing {
@@ -123,7 +132,7 @@ export interface EmergencyService {
   name: string;
   icon: string;
   description: string;
- responseTime: string;
+  responseTime: string;
   phone: string;
 }
 
