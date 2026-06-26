@@ -1,10 +1,11 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAuth } from "../firebase";
 import { createUserIfNotExists } from "../lib/userService";
+import type { User } from "../types";
 
 const provider = new GoogleAuthProvider();
 
-export const signInWithGoogle = async () => {
+export const signInWithGoogle = async (): Promise<User> => {
   try {
     console.log("🔵 Starting Google Login...");
 
@@ -18,9 +19,9 @@ export const signInWithGoogle = async () => {
       throw new Error("No Firebase user returned");
     }
 
-    const user = {
+    const user: User = {
       id: firebaseUser.uid,
-      name: firebaseUser.displayName || "User",
+      name: firebaseUser.displayName || "مستخدم جديد",
       email: firebaseUser.email || "",
       phone: firebaseUser.phoneNumber || "",
       avatar: firebaseUser.photoURL || "",
