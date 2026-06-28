@@ -1,18 +1,17 @@
-import { firebaseAuth, db } from "../firebase";
+import { auth, db } from "./firebase"; // تم التعديل هنا (نقطة واحدة بدلاً من نقطتين)
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
 
 export const loginWithGoogle = async () => {
-  const result = await signInWithPopup(firebaseAuth, provider);
+  const result = await signInWithPopup(auth, provider);
 
   const firebaseUser = result.user;
 
   const userRef = doc(db, "users", firebaseUser.uid);
   const snap = await getDoc(userRef);
 
-  // أول مرة
   if (!snap.exists()) {
     const newUser = {
       id: firebaseUser.uid,

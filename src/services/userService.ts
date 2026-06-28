@@ -1,4 +1,4 @@
-import { db } from "../firebase";
+import { db } from "../lib/firebase";
 import {
   doc,
   getDoc,
@@ -9,25 +9,29 @@ import {
 import type { User } from "../types";
 
 /**
- * إنشاء مستخدم جديد إذا لم يكن موجودًا
+ * إنشاء مستخدم إذا لم يكن موجود
  */
 export const createUserIfNotExists = async (
-  firebaseUser: User
+  user: User
 ): Promise<User> => {
-  const userRef = doc(db, "users", firebaseUser.id);
+  const userRef = doc(db, "users", user.id);
 
   const snapshot = await getDoc(userRef);
 
   if (!snapshot.exists()) {
-    await setDoc(userRef, firebaseUser);
-    return firebaseUser;
+    await setDoc(userRef, {
+      ...user,
+      createdAt: user.createdAt || new Date().toISOString(),
+    });
+
+    return user;
   }
 
   return snapshot.data() as User;
 };
 
 /**
- * جلب بيانات المستخدم
+ * جلب مستخدم
  */
 export const getUser = async (
   uid: string
@@ -42,7 +46,7 @@ export const getUser = async (
 };
 
 /**
- * تحديث بيانات المستخدم
+ * تحديث مستخدم
  */
 export const updateUser = async (
   uid: string,

@@ -1,99 +1,158 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../lib/firebase";
 import { signInWithGoogle } from "../auth/googleAuth";
 import { signInWithFacebook } from "../auth/facebookAuth";
-
 import { useAuth } from "../contexts/AuthContext";
+import { Truck } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
-  const [loadingGoogle, setLoadingGoogle] = useState(false);
-  const [loadingFacebook, setLoadingFacebook] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleGoogle = async () => {
+  // ===== EMAIL LOGIN =====
+  const handleEmailLogin = async () => {
     try {
-      setLoadingGoogle(true);
+      setLoading(true);
       setError("");
 
-      const user = await signInWithGoogle();
+      const res = await signInWithEmailAndPassword(auth, email, password);
 
-      login(user);
+      const user = {
+        uid: res.user.uid,
+        email: res.user.email || "",
+        name: res.user.displayName || "",
+        role: "user",
+      };
 
+      login(user as any);
       navigate("/", { replace: true });
-
-    } catch (err) {
-      console.error(err);
-      setError("فشل تسجيل الدخول بواسطة جوجل");
+    } catch (err: any) {
+      console.log(err);
+      setError("فشل تسجيل الدخول بالإيميل أو كلمة المرور غير صحيحة");
     } finally {
-      setLoadingGoogle(false);
+      setLoading(false);
     }
   };
 
-  const handleFacebook = async () => {
+  // ===== GOOGLE =====
+  const handleGoogle = async () => {
     try {
-      setLoadingFacebook(true);
+      setLoading(true);
       setError("");
 
-      const user = await signInWithFacebook();
+      const res: any = await signInWithGoogle();
 
-      login(user);
+      const user = {
+        uid: res.uid,
+        email: res.email || "",
+        // تم حل مشكلة الاسم هنا
+        name: res.displayName || res.name || "",
+        role: "user",
+      };
 
+      login(user as any);
       navigate("/", { replace: true });
-
     } catch (err) {
-      console.error(err);
-      setError("فشل تسجيل الدخول بواسطة فيسبوك");
+      setError("فشل تسجيل الدخول بجوجل");
     } finally {
-      setLoadingFacebook(false);
+      setLoading(false);
+    }
+  };
+
+  // ===== FACEBOOK =====
+  const handleFacebook = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res: any = await signInWithFacebook();
+
+      const user = {
+        uid: res.uid,
+        email: res.email || "",
+        // تم حل مشكلة الاسم هنا
+        name: res.displayName || res.name || "",
+        role: "user",
+      };
+
+      login(user as any);
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError("فشل تسجيل الدخول بفيسبوك");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen flex items-center justify-center bg-gray-100 px-4"
-    >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+    <div dir="rtl" className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-lg">
 
-        <h1 className="text-3xl font-bold text-center mb-2">
-          تسجيل الدخول
-        </h1>
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center">
+            <Truck className="text-white" />
+          </div>
+          <div className="font-bold text-xl">طريق</div>
+        </div>
 
-        <p className="text-center text-gray-500 mb-8">
-          مرحباً بك فى تطبيق طريق
-        </p>
+        <h1 className="text-center text-xl font-bold mb-4">تسجيل الدخول</h1>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-xl mb-5 text-center">
+          <div className="bg-red-100 text-red-600 p-2 rounded mb-3 text-center">
             {error}
           </div>
         )}
 
-        <button
-          onClick={handleGoogle}
-          disabled={loadingGoogle || loadingFacebook}
-          className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl transition mb-4 disabled:opacity-50"
-        >
-          {loadingGoogle
-            ? "جارى تسجيل الدخول..."
-            : "تسجيل الدخول بواسطة جوجل"}
-        </button>
+        {/* EMAIL LOGIN */}
+        <input
+          type="email"
+          placeholder="البريد الإلكتروني"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border p-2 rounded mb-2"
+        />
+
+        <input
+          type="password"
+          placeholder="كلمة المرور"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border p-2 rounded mb-3"
+        />
 
         <button
-          onClick={handleFacebook}
-          disabled={loadingGoogle || loadingFacebook}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition disabled:opacity-50"
+          onClick={handleEmailLogin}
+          disabled={loading}
+          className="w-full bg-orange-500 text-white p-2 rounded mb-3"
         >
-          {loadingFacebook
-            ? "جارى تسجيل الدخول..."
-            : "تسجيل الدخول بواسطة فيسبوك"}
+          {loading ? "جاري الدخول..." : "تسجيل دخول"}
         </button>
 
+        {/* SOCIAL */}
+        <button onClick={handleGoogle} className="w-full border p-2 rounded mb-2">
+          تسجيل بجوجل
+        </button>
+
+        <button onClick={handleFacebook} className="w-full bg-blue-600 text-white p-2 rounded">
+          تسجيل بفيسبوك
+        </button>
+
+        {/* REGISTER */}
+        <div className="text-center mt-4 text-sm">
+          ليس لديك حساب؟{" "}
+          <Link to="/register" className="text-orange-500">
+            إنشاء حساب
+          </Link>
+        </div>
       </div>
     </div>
   );

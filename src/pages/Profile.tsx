@@ -83,8 +83,9 @@ export default function Profile() {
                   getInitials(user.name)
                 )}
               </div>
-              <div className={`absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 ${getBadgeColor(user.type)} text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-lg whitespace-nowrap border-2 border-navy`}>
-                {userTypeLabels[user.type] || user.type}
+              {/* تأمين المتغير هنا بتعيين قيمة افتراضية || 'user' */}
+              <div className={`absolute -bottom-2 sm:-bottom-3 left-1/2 -translate-x-1/2 ${getBadgeColor(user.type || 'user')} text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-lg whitespace-nowrap border-2 border-navy`}>
+                {userTypeLabels[user.type || 'user'] || user.type}
               </div>
             </div>
             

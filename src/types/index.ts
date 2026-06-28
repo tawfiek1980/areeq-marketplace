@@ -1,180 +1,188 @@
-// index.ts
+// =====================
+// USER
+// =====================
 export interface User {
   id: string;
-  name: string;
   email: string;
-  phone: string;
-  whatsapp?: string;
-  type:
-    | "individual"
-    | "company"
-    | "dealer"
-    | "workshop"
-    | "finance"
-    | "admin";
+  name: string;
+  phone?: string;
+
+  type?: "user" | "admin" | "individual" | "dealer" | "company" | "workshop" | "finance";
+
+  role?: string;
+  governorate?: string;
   avatar?: string;
-  governorate: string;
+  whatsapp?: string;
   city?: string;
   currentLocation?: string;
+
   drivingType?: string;
   experienceYears?: number;
+
   businessName?: string;
   specialization?: string;
-  verified: boolean;
-  createdAt: string;
-  updatedAt?: string;
+
+  verified?: boolean;
+  createdAt?: string;
 }
 
+// =====================
+// LISTING
+// =====================
 export interface Listing {
   id: string;
   title: string;
   description: string;
   price: number;
-  category: string;
-  subcategory: string;
-  location: string;
-  governorate: string;
-  images: string[];
-  userId: string;
+  images?: string[];
+  verified?: boolean;
+  location?: string;
+  governorate?: string;
+
   userName: string;
   userPhone: string;
-  userType: string;
-  verified: boolean;
-  status: "active" | "pending" | "rejected" | "sold";
-  featured: boolean;
-  year?: number;
+  userType?: string;
+
+  status?: string;
+  category?: string;
+  year?: string | number;
+  condition?: string;
   brand?: string;
   model?: string;
-  condition?: "new" | "used";
-  createdAt: string;
+
+  createdAt: string | Date;
 }
 
+// =====================
+// LOAD
+// =====================
 export interface Load {
   id: string;
+  title: string;
   origin: string;
   destination: string;
-  cargoType: string;
-  weight: string;
+  cargoType?: string;
+  weight?: string;
+  date?: string;
   price: number;
-  distance?: string;
-  date: string;
-  userId: string;
-  userName: string;
+
+  userName?: string;
   userPhone: string;
-  status: "available" | "in_transit" | "delivered";
-  createdAt: string;
 }
 
+// =====================
+// JOB
+// =====================
 export interface Job {
   id: string;
   title: string;
-  company: string;
-  type:
-    | "driver"
-    | "mechanic"
-    | "technician"
-    | "logistics"
-    | "warehouse"
-    | "sales";
-  location: string;
-  governorate: string;
-  salary?: string;
   description?: string;
-  requirements: string[];
-  experience: string;
+  company?: string;          // تمت الإضافة لحل خطأ JobCard و Admin
+  requirements?: string[];   // تمت الإضافة لحل خطأ PostListing
+
   userId: string;
   userName?: string;
   userPhone?: string;
-  status: "active" | "filled" | "closed";
-  featured: boolean;
-  createdAt: string;
+
+  type: string;
+  location?: string;
+  experience?: string;
+  salary?: string;
+
+  createdAt?: string;
 }
 
+// =====================
+// FINANCE
+// =====================
 export interface FinanceRequest {
   id: string;
-  name: string;
-  phone: string;
-  governorate: string;
-  vehicleType: string;
-  vehiclePrice: number;
-  downPayment: number;
+  userId?: string;
+
+  name?: string;             // تمت الإضافة لحل خطأ Finance و Admin
+  phone?: string;            // تمت الإضافة لحل خطأ Finance و Admin
+  governorate?: string;      // تمت الإضافة
+  vehicleType?: string;      // تمت الإضافة لحل خطأ Finance و Admin
+  vehiclePrice?: number;     // تمت الإضافة لحل خطأ Finance و Admin
+
+  amount?: number;
+  duration?: number;
+
+  downPayment?: number;
   monthlyIncome?: number;
-  status: "new" | "reviewing" | "approved" | "rejected";
-  createdAt: string;
+
+  status?: "pending" | "approved" | "rejected";
+
+  createdAt?: string;
 }
 
+// =====================
+// CATEGORY
+// =====================
 export interface Category {
   id: string;
   name: string;
-  nameEn: string;
+  nameEn?: string;
   icon: string;
+  color?: string;
   count: number;
-  color: string;
 }
 
-export interface Governorate {
+// =====================
+// OTHERS
+// =====================
+export interface EmergencyService {
   id: string;
   name: string;
-  nameEn: string;
-  listingsCount: number;
-  loadsCount: number;
+  icon: string;
+  description?: string;
+  responseTime?: string;
+  phone: string;
+}
+
+export interface SocialLink {
+  id: string;
+  name: string;
+  url: string;
+  platform?: string;
+  icon?: string;
+  color?: string;
+  isActive?: boolean;
+  displayOrder: number;
+}
+
+export interface ContactNumber {
+  id: string;
+  phone: string;
+  title?: string;
+  department?: string;
+  description?: string;
+  isActive?: boolean;
+  displayOrder: number;
 }
 
 export interface MarketStat {
   label: string;
   value: string;
-  change?: string;
+  title?: string;
   trend?: "up" | "down" | "stable";
-}
-
-export interface EmergencyService {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  responseTime: string;
-  phone: string;
-}
-
-export interface Message {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  listingId?: string;
-  content: string;
-  createdAt: string;
-  read: boolean;
-}
-
-export interface SocialLink {
-  id: string;
-  platform: string;
-  name: string;
-  url: string;
-  icon?: string;
-  color?: string;
-  isActive: boolean;
-  displayOrder: number;
-  createdAt: string;
-}
-
-export interface ContactNumber {
-  id: string;
-  title: string;
-  phone: string;
-  department?: string;
-  description?: string;
-  isActive: boolean;
-  displayOrder: number;
-  createdAt: string;
+  change?: string;
 }
 
 export interface SiteSettings {
-  [key: string]: string;
+  siteName: string;
 }
 
 export interface ApiResponse<T> {
-  success: boolean;
   data: T;
+  success: boolean;
   message?: string;
+}
+
+export interface Governorate {
+  id: string;
+  name: string;
+  nameEn?: string;
+  listingsCount?: number;    // تمت الإضافة لحل خطأ ملف data.ts
+  loadsCount?: number;       // تمت الإضافة لحل خطأ ملف data.ts
 }

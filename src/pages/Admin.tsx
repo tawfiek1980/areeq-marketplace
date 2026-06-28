@@ -175,7 +175,7 @@ export default function Admin() {
                         <p className="font-bold text-text line-clamp-1">{listing.title}</p>
                         <p className="text-xs text-text-light">{listing.location}</p>
                       </td>
-                      <td className="px-4 py-3 text-orange font-bold">{listing.price.toLocaleString('ar-EG')} ج</td>
+                      <td className="px-4 py-3 text-orange font-bold">{listing.price?.toLocaleString('ar-EG')} ج</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
                           listing.status === 'active' ? 'bg-green-100 text-green-600' :
@@ -227,7 +227,7 @@ export default function Admin() {
                     <tr key={load.id} className="hover:bg-bg/50">
                       <td className="px-4 py-3">{load.origin} → {load.destination}</td>
                       <td className="px-4 py-3">{load.cargoType} ({load.weight})</td>
-                      <td className="px-4 py-3 text-orange font-bold">{load.price.toLocaleString('ar-EG')} ج</td>
+                      <td className="px-4 py-3 text-orange font-bold">{load.price?.toLocaleString('ar-EG')} ج</td>
                       <td className="px-4 py-3"><span className="text-xs font-bold px-2 py-1 rounded-lg bg-green-100 text-green-600">فعال</span></td>
                     </tr>
                   ))}
@@ -284,7 +284,8 @@ export default function Admin() {
                         <p className="text-xs text-text-light">{request.phone}</p>
                       </td>
                       <td className="px-4 py-3">{request.vehicleType}</td>
-                      <td className="px-4 py-3 text-orange font-bold">{request.vehiclePrice.toLocaleString('ar-EG')} ج</td>
+                      {/* تم إضافة ? هنا لتفادي خطأ undefined في السعر */}
+                      <td className="px-4 py-3 text-orange font-bold">{request.vehiclePrice?.toLocaleString('ar-EG')} ج</td>
                       <td className="px-4 py-3">
                         <select
                           value={request.status}

@@ -1,15 +1,23 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyD_AufTMHA5YGHsQ1r71gM1M7d_vdT9eRI",
+  authDomain: "tareeq-d4dcc.firebaseapp.com",
+  projectId: "tareeq-d4dcc",
+  storageBucket: "tareeq-d4dcc.appspot.com",
+  messagingSenderId: "725660784165",
+  appId: "1:725660784165:web:56660a3b472dc6b07811cc",
+  measurementId: "G-DH1ZFTVT6J",
 };
 
-const app = initializeApp(firebaseConfig);
+// ✅ يمنع duplicate app error
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+export default app;

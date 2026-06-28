@@ -75,7 +75,8 @@ export default function ProfileForm({ saving, setSaving }: Props) {
       return;
     }
 
-    if (["dealer", "company", "workshop", "finance"].includes(type) && !businessName) {
+    // تأمين المتغير type لتفادي خطأ undefined
+    if (["dealer", "company", "workshop", "finance"].includes(type || "") && !businessName) {
       alert("من فضلك أدخل اسم النشاط/الشركة.");
       return;
     }
@@ -99,7 +100,8 @@ export default function ProfileForm({ saving, setSaving }: Props) {
         type,
         drivingType: type === "individual" ? drivingType : "",
         experienceYears: type === "individual" ? Number(experienceYears) : 0,
-        businessName: ["dealer", "company", "workshop", "finance"].includes(type) ? businessName : "",
+        // تأمين المتغير type هنا أيضاً
+        businessName: ["dealer", "company", "workshop", "finance"].includes(type || "") ? businessName : "",
         specialization: type === "workshop" ? specialization : "",
       };
 
@@ -265,7 +267,8 @@ export default function ProfileForm({ saving, setSaving }: Props) {
           </div>
         )}
 
-        {["dealer", "company", "workshop", "finance"].includes(type) && (
+        {/* تأمين المتغير type لتفادي خطأ undefined */}
+        {["dealer", "company", "workshop", "finance"].includes(type || "") && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block mb-2 font-semibold text-gray-700">{getBusinessNameLabel()} <span className="text-red-500">*</span></label>

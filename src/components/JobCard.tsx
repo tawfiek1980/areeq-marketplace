@@ -50,10 +50,11 @@ export default function JobCard({ job }: JobCardProps) {
       <div className="flex items-center justify-between pt-3 border-t border-border">
         <div className="flex items-center gap-1.5 text-xs text-text-light">
           <Briefcase className="w-3.5 h-3.5" />
-          <span>تم النشر: {new Date(job.createdAt).toLocaleDateString('ar-EG')}</span>
+          {/* تم حل خطأ التاريخ هنا */}
+          <span>تم النشر: {job.createdAt ? new Date(job.createdAt).toLocaleDateString('ar-EG') : 'غير محدد'}</span>
         </div>
         <a
-          href={getWhatsAppLink('01000000000', `السلام عليكم، أهتم بوظيفة ${job.title} في ${job.company}`)}
+          href={getWhatsAppLink('01000000000', `السلام عليكم، أهتم بوظيفة ${job.title} في ${job.company || ''}`)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors btn-press"

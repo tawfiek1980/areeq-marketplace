@@ -1,35 +1,75 @@
 import {
-  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
+  signInWithPopup,
+  signOut,
 } from "firebase/auth";
 
-import { auth } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
+import { auth, db } from "./firebase";
 
-// Google Login
-export const loginWithGoogle = async () => {
-  return await signInWithPopup(auth, googleProvider);
-};
+// =========================
+// تسجيل مستخدم جديد
+// =========================
+export const registerWithEmail = async (
+  email: string,
+  password: string,
+  name: string
+) => {
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-// Facebook Login
-export const loginWithFacebook = async () => {
-  return await signInWithPopup(auth, facebookProvider);
-};
+  const user = userCred.user;
 
-// Phone Login (OTP)
-export const sendOTP = async (phone: string, recaptcha: any) => {
-  const confirmation = await signInWithPhoneNumber(auth, phone, recaptcha);
-  return confirmation;
-};
-
-// Recaptcha setup
-export const setupRecaptcha = (containerId: string) => {
-  return new RecaptchaVerifier(auth, containerId, {
-    size: "invisible",
+  await setDoc(doc(db, "users", user.uid), {
+    uid: user.uid,
+    name,
+    email,
+    role: "user", // default role
+    createdAt: new Date(),
   });
+
+  return user;
+};
+
+// =========================
+// تسجيل دخول Email
+// =========================
+export const loginWithEmail = async (email: string, password: string) => {
+  const userCred = await signInWithEmailAndPassword(auth, email, password);
+  return userCred.user;
+};
+
+// =========================
+// Google Login
+// =========================
+export const loginWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+
+  const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  // لو أول مرة يدخل → ننشئه في Firestore
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      uid: user.uid,
+      name: user.displayName || "",
+      email: user.email,
+      role: "user",
+      createdAt: new Date(),
+    });
+  }
+
+  return user;
+};
+
+// =========================
+// Logout
+// =========================
+export const logoutUser = async () => {
+  await signOut(auth);
 };

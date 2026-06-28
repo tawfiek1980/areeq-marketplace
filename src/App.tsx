@@ -23,7 +23,6 @@ import ListingDetail from "./pages/ListingDetail";
 import Favorites from "./pages/Favorites";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-
 import CompleteProfile from "./pages/CompleteProfile";
 
 import { useAuth } from "./contexts/AuthContext";
@@ -33,8 +32,8 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-lg">
-        جاري تحميل البيانات...
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
       </div>
     );
   }
@@ -48,6 +47,7 @@ function App() {
 
         <main className="flex-1">
           <Routes>
+            {/* PUBLIC */}
             <Route path="/" element={<Home />} />
             <Route path="/vehicles" element={<Vehicles />} />
             <Route path="/equipment" element={<Equipment />} />
@@ -59,28 +59,22 @@ function App() {
             <Route path="/emergency" element={<Emergency />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
 
+            {/* AUTH */}
             <Route
               path="/login"
               element={
-                isAuthenticated ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <Login />
-                )
+                isAuthenticated ? <Navigate to="/" /> : <Login />
               }
             />
 
             <Route
               path="/register"
               element={
-                isAuthenticated ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <Register />
-                )
+                isAuthenticated ? <Navigate to="/" /> : <Register />
               }
             />
 
+            {/* PROTECTED */}
             <Route
               path="/complete-profile"
               element={
